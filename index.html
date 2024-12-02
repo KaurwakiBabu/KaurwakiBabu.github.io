@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+    h1 {
+        text-align: center;
+        font-family: Arial, Verdana, Helvetica;
+        font-size: 40px;
+    
+    }
+    p {text-align: center;}
+    table, th, td {
+        border: 1px solid;
+        font-family: Arial, Verdana, Helvetica;
+        text-align: center;
+        width: 100%;
+        tr:nth-child(even) {background-color: #f2f2f2;}
+        th { font-size: 30px}
+        td { 
+            font-size: 20px; 
+            font-weight: normal;
+        }
+    }
+    .button1 {
+        background-color: #24b933;
+        -webkit-border-radius: 60px;
+        border-radius: 60px;
+        border: none;
+        color: #eeeeee;
+        cursor: pointer;
+        display: inline-block;
+        font-family: sans-serif;
+        font-size: 90px;
+        padding: 20px 20px;
+        text-align: center;
+        text-decoration: none;
+      }
+      .button2 {
+        background-color: #d22626;
+        -webkit-border-radius: 60px;
+        border-radius: 60px;
+        border: none;
+        color: #eeeeee;
+        cursor: pointer;
+        display: inline-block;
+        font-family: sans-serif;
+        font-size: 90px;
+        padding: 5px 15px;
+        text-align: center;
+        text-decoration: none;
+      }
+      @keyframes glowing {
+        0% {
+          background-color: #d22626;
+          box-shadow: 0 0 5px #d22626;
+        }
+        50% {
+          background-color: #ff0000;
+          box-shadow: 0 0 100px #ff0000;
+        }
+        100% {
+          background-color: #d22626;
+          box-shadow: 0 0 5px #d22626;
+        }
+      }
+      .button2 {
+        animation: glowing 1300ms infinite;
+      }
+</style>
+
+<h1> FallSense Dashboard </title>
+<br>
+<br>
+
+<table>
+    <tr>
+      <th>Patient Name</th>
+      <th>Chart</th>
+      <th>Fall Status</th>
+    </tr>
+    <tr>
+      <td>Patient #1</td>
+      <td>
+        <iframe align="left" width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/2692412/charts/7?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+      </td>
+      <td>
+        <a class="button1" href="#" id="fallstat_safe"></a>
+        <a class="button2" href="#" id="fallstat_fall"></a> 
+      </td>
+    </tr>
+    <tr>
+      <td>Patient #2</td>
+      <td> TBD </td>
+      <td> TBD </td>
+    </tr>
+    <tr>
+        <td>Patient #3</td>
+        <td> TBD </td>
+        <td> TBD </td>
+    </tr>
+    <tr>
+        <td>Patient #3</td>
+        <td> TBD </td>
+        <td> TBD </td>
+    </tr>
+    <tr>
+        <td>Patient #4</td>
+        <td> TBD </td>
+        <td> TBD </td>
+    </tr>
+    <tr>
+        <td>Patient #5</td>
+        <td> TBD </td>
+        <td> TBD </td>
+    </tr>
+    <tr>
+        <td>Patient #6</td>
+        <td> TBD </td>
+        <td> TBD </td>
+    </tr>
+</table>
+
+<br>
+
+
+<head>
+    <script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function ()
+        {
+            GetData();
+        });
+
+        function GetData()
+        {
+            var url = 'https://api.thingspeak.com/channels/2692412/feeds.json?results=3';
+            $.ajax
+            ({
+                url: url,
+                type: 'GET',
+                contentType: "application/json",
+                //dataType: "json",
+                //crossDomain: true,
+                success: function (data, textStatus, xhr) {
+                    var check = 0;
+                    $.each(data, function (i, item) {
+                        if (i == 'feeds') {
+                            var ubound = item.length;
+                            check = item[ubound - 1].field7;
+                            $('#txtField7').val(item[ubound - 1].field7);
+                        }
+                    });
+
+                    if (check == 0) {
+                        document.getElementById("fallstat_fall").innerHTML = "Fall Detected";
+                        document.getElementById("fallstat_safe").innerHTML = null;
+                    }
+                    else {
+                        document.getElementById("fallstat_safe").innerHTML = "Safe";
+                        document.getElementById("fallstat_fall").innerHTML = null;
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+
+            setTimeout(GetData, 10000);
+        }
+    </script>
+</head>
+</html>
